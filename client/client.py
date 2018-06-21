@@ -1,10 +1,72 @@
+#!/usr/bin/env python
+import pika
 import ConfigParser
+import psutil
+import json
+
 
 config = ConfigParser.ConfigMachine('conf.ini')
 
 config.parse_conf()
-print(config.id_node)
-print(config.metrics)
-print(config.interval)
 
+
+'''this function is used to get usage of every diskpart
+    but from one reason it dosen't work on my computer
+    (access denied), probably because of antivirus
+'''
+def disk_usage():
+    partion_usage = []
+
+    for part in psutil.disk_partitions(all=False):
+        partion_usage.append(psutil.disk_usage(part.mountpoint))
+
+    return partition_usage
+
+
+def solve_metrics(key):
+    temp_metrics = {
+                        'cpu_percent'    : psutil.cpu_percent(interval=1),
+                        'cpu_stats'      : psutil.cpu_stats(),
+                        'virtual_memory' : psutil.virtual_memory(),
+                        'disk_usage'     : psutil.disk_usage('/')
+                    }
+
+    try:
+        result = temp_metrics.get(key,0)
+    except Exception as e:
+        return key,0
+
+    return key,result
+
+
+def get_metrics():
+    colected_metrics = {}
+
+    for i in config.metrics:
+        key,result = solve_metrics(i)
+        colected_metrics[key] = result
+
+    return colected_metrics
+
+
+def send_metrics():
+    metrics=get_metrics()
+    metrics['id_node']  = config.id_node
+    metrics['interval'] = config.interval
+    metrics['tag']      = 'save_metrics_to_db'
+
+    connection = pika.BlockingConnection(pika.ConnectionParameters(
+                                                            host='localhost'))
+    channel = connection.channel()
+
+    channel.queue_declare(queue='client_server_ampq')
+
+    channel.basic_publish(exchange='',
+                      routing_key='client_server_ampq',
+                      body=json.dumps(metrics))
+
+    connection.close()
+
+
+send_metrics()
 exit()
