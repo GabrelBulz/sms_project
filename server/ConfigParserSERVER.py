@@ -23,6 +23,12 @@ class ConfigMachine(object):
 		self.metrics = []
 		self.interval = 1
 
+        self.ampq_url = ''
+        self.ampq_port = ''
+        self.ampq_vhost = ''
+        self.ampq_user = ''
+        self.ampq_password = ''
+
 	def set_filename(self,filename):
 		self.filename = filename
 
@@ -35,12 +41,21 @@ class ConfigMachine(object):
 			self.id_node = parser['CONF_MACHINE']['ID_NODE']
 			self.metrics = parser['CONF_MACHINE']['METRICS'].split(',')
 		except Exception as e:
-			print("mue")
+			print("missing id or metrics")
 
 		try:
 			self.interval = parser['CONF_MAHCINE']['INTERVAL']
 		except Exception as e:
 			self.interval = 1
+
+        try:
+            self.ampq_url      = parser['ampq']['url']
+            self.ampq_port     = parser['ampq']['port']
+            self.ampq_vhost    = parser['ampq']['vhost']
+            self.ampq_user     = parser['ampq']['user']
+            self.ampq_password = parser['ampq']['password']
+        except Exception as e:
+            print("missing ampq configs")
 
 
 

@@ -7,10 +7,10 @@ channel = connection.channel()
 
 channel.queue_declare(queue='client_server_ampq')
 
-def callback(ch, method, properties, body):
+def solve_queue(ch, method, properties, body):
     print(" [x] Received %r" % body)
 
-channel.basic_consume(callback,
+channel.basic_consume(solve_queue,
                       queue='client_server_ampq',
                       no_ack=True)
 

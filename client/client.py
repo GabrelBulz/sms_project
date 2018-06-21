@@ -50,10 +50,16 @@ def get_metrics():
 
 
 def send_metrics():
-    metrics=get_metrics()
-    metrics['id_node']  = config.id_node
-    metrics['interval'] = config.interval
-    metrics['tag']      = 'save_metrics_to_db'
+    metrics_pack = {}
+    metrics_pack['tag']      = 'save_metrics_to_db'
+    metrics_pack['id_node']  = config.id_node
+    metrics_pack['metrics']  = {}
+    metrics_pack['interval'] = config.interval
+
+    temp_metrics = get_metrics()
+
+    for i in temp_metrics.keys():
+        metrics_pack['metrics'][i] = temp_metrics[i]
 
     connection = pika.BlockingConnection(pika.ConnectionParameters(
                                                             host='localhost'))
@@ -63,7 +69,7 @@ def send_metrics():
 
     channel.basic_publish(exchange='',
                       routing_key='client_server_ampq',
-                      body=json.dumps(metrics))
+                      body=json.dumps(metrics_pack))
 
     connection.close()
 
