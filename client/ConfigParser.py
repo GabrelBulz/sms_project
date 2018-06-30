@@ -1,5 +1,6 @@
 import configparser
 
+
 class ConfigMachine(object):
 
     """ Class ConfigMachine
@@ -17,8 +18,7 @@ class ConfigMachine(object):
     """
 
     def __init__(self, filename):
-
-        self.filename=filename
+        self.filename = filename
         self.id_node = ''
         self.metrics = []
         self.interval = 1
@@ -29,7 +29,7 @@ class ConfigMachine(object):
         self.ampq_user = ''
         self.ampq_password = ''
 
-    def set_filename(self,filename):
+    def set_filename(self, filename):
         self.filename = filename
 
     def parse_conf(self):
@@ -49,10 +49,10 @@ class ConfigMachine(object):
             self.interval = 1
 
         try:
-            self.ampq_url      = parser['ampq']['url']
-            self.ampq_port     = parser['ampq']['port']
-            self.ampq_vhost    = parser['ampq']['vhost']
-            self.ampq_user     = parser['ampq']['user']
+            self.ampq_url = parser['ampq']['url']
+            self.ampq_port = parser['ampq']['port']
+            self.ampq_vhost = parser['ampq']['vhost']
+            self.ampq_user = parser['ampq']['user']
             self.ampq_password = parser['ampq']['password']
         except Exception as e:
             print("missing ampq configs")
