@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 import pika
 
+
+
+# ##client -> server
 # connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 # channel = connection.channel()
 
@@ -16,6 +19,10 @@ import pika
 
 # channel.start_consuming()
 
+
+
+
+## api -> server
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 
 channel = connection.channel()

@@ -2,6 +2,14 @@ import configparser
 
 class ConfigMachine(object):
 
+
+    """
+
+    refallllllll
+
+
+    """
+
 	""" Class ConfigMachine
 
 		constructor args -> filename as conf file

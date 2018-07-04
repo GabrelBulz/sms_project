@@ -5,7 +5,7 @@ import psutil
 import json
 
 
-config = ConfigParser.ConfigMachine('conf.ini')
+config = ConfigParser.ConfigMachine('../conf.ini')
 
 config.parse_conf()
 
@@ -62,9 +62,9 @@ def send_metrics():
         metrics_pack['metrics'][i] = temp_metrics[i]
 
     # int the future if i'll get a real server
-    # the pika connection will be make using the
+    # the pika connection will be created using the
     # parameters from the config file
-    # with config.ampq_url and so
+    # with config.ampq_url and so,
     # but until then i'll just use local host
 
     connection = pika.BlockingConnection(pika.ConnectionParameters(
