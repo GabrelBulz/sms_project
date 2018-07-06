@@ -1,0 +1,7 @@
+setup.py
+client_sms.egg-info/PKG-INFO
+client_sms.egg-info/SOURCES.txt
+client_sms.egg-info/dependency_links.txt
+client_sms.egg-info/requires.txt
+client_sms.egg-info/top_level.txt
+test/test_ConfigParser.py

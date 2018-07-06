@@ -41,7 +41,7 @@ class ConfigMachine(object):
             self.id_node = parser['CONF_MACHINE']['ID_NODE']
             self.metrics = parser['CONF_MACHINE']['METRICS'].split(',')
         except Exception as e:
-            print("missing id or metrics")
+            raise Exception("missing id or metrics")
 
         try:
             self.interval = parser['CONF_MAHCINE']['INTERVAL']
@@ -55,4 +55,4 @@ class ConfigMachine(object):
             self.ampq_user = parser['ampq']['user']
             self.ampq_password = parser['ampq']['password']
         except Exception as e:
-            print("missing ampq configs")
+            raise Exception("missing ampq configs")

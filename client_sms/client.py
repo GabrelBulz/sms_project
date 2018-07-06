@@ -3,11 +3,30 @@ import pika
 import ConfigParser
 import psutil
 import json
+import sched
+import time
+import datetime
 
 
-config = ConfigParser.ConfigMachine('../conf.ini')
+# schedule for repating function
+Sched = sched.scheduler(time.time, time.sleep)
+
+config = ConfigParser.ConfigMachine('conf.ini')
 
 config.parse_conf()
+
+"""
+int the future if i'll get a real server
+the pika connection will be created using the
+parameters from the config file
+with config.ampq_url and so,
+but until then i'll just use local host
+"""
+connection = pika.BlockingConnection(pika.ConnectionParameters(
+                                                            host='localhost'))
+channel = connection.channel()
+
+channel.queue_declare(queue='client_server_ampq')
 
 
 #   this function is used to get usage of every diskpart
@@ -50,35 +69,25 @@ def get_metrics():
 
 # this function will create a json object to be sent to the server
 # it will contain the id_node , the collected metrics, and the interval
-def send_metrics():
+def send_metrics(schedule):
     metrics_pack = {}
     metrics_pack['id_node'] = config.id_node
     metrics_pack['metrics'] = {}
-    metrics_pack['interval'] = config.interval
+    metrics_pack['timeStamp'] = str(datetime.datetime.now())
 
     temp_metrics = get_metrics()
 
     for i in temp_metrics.keys():
         metrics_pack['metrics'][i] = temp_metrics[i]
 
-    # int the future if i'll get a real server
-    # the pika connection will be created using the
-    # parameters from the config file
-    # with config.ampq_url and so,
-    # but until then i'll just use local host
-
-    connection = pika.BlockingConnection(pika.ConnectionParameters(
-                                                            host='localhost'))
-    channel = connection.channel()
-
-    channel.queue_declare(queue='client_server_ampq')
-
     channel.basic_publish(exchange='',
                           routing_key='client_server_ampq',
                           body=json.dumps(metrics_pack))
 
-    connection.close()
+    schedule.enter(config.interval, 1, send_metrics, (schedule,))
 
 
-send_metrics()
-exit()
+if __name__ == "__main__":
+
+    Sched.enter(config.interval, 1, send_metrics, (Sched,))
+    Sched.run()

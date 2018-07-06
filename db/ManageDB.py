@@ -1,26 +1,67 @@
-from sqlalchemy import create_engine, ForeignKey
-from sqlalchemy import Column, Date, Integer, String
+from sqlalchemy import Column, DateTime, Integer, String
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+import datetime
 import ConfigParser_db
 
 
-class ManageDB(object):
+config = ConfigParser_db.ConfigMachine_db('../conf.ini')
+config.parse_conf()
+
+Base = declarative_base()
 
 
-    def __init__(self):
-        self.config = ConfigParser_db.ConfigMachine_db('../conf.ini')
-        self.config.parse_conf()
+class Pack_metrics (Base):
 
-    def create_DB(self):
-        engine = create_engine(self.config.url, echo=True)
+    __tablename__ = 'tableMetrics'
 
-    def getMetrics(self, reqest):
+    id = Column('id', Integer, primary_key=True)
+    node_id = Column('node_id', Integer, unique=False, default=0)
+    storedMetrics = Column('Metrics', String(200), default="missing metrics")
+    TimeSpamp = Column('TimeStamp', DateTime, default=datetime.datetime.now)
 
-        print(reqest)
+    def __init__(self, pack):
 
-    def putMetrics(self, pack_metrics):
+        try:
+            self.node_id = pack['id_node']
+            self.storedMetrics = pack['metrics']
+            self.TimeStamp
+        except Exception as e:
+            print("missing something from pack")
 
-        print("put "+pack_metrics)
+    def save(self, session=None):
 
-gg=ManageDB()
-gg.create_DB()
+
+
+
+    def to_dict(seft):
+
+        pack = {}
+
+        pack['id_node'] = self.node_id;
+        pack['metrics'] = self.storedMetrics
+        pack['timeStamp'] = self.TimeStamp
+
+        return pack
+
+
+engine = create_engine('sqlite:///:memory:', echo=True)
+
+if not engine.dialect.has_table(engine, 'tableMetrics'):
+    Base.metadata.create_all(bind=engine)
+    print("ffffffff")
+
+Session = sessionmaker(bind=engine)
+
+session = Session()
+
+obj= session.query(Pack_metrics).all()
+
+print(obj)
+
+
+session.close()
+
+
+
