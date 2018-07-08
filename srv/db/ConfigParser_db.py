@@ -17,7 +17,7 @@ class ConfigMachine_db(object):
 
     def __init__(self, filename):
         self.filename = filename
-        self.url='sqlite:///D:\sms_proj\db'
+        self.url='sqlite:///:memory:'
 
     def set_filename(self, filename):
         self.filename = filename
@@ -28,6 +28,6 @@ class ConfigMachine_db(object):
         parser.read(self.filename)
 
         try:
-            self.url = parser['db']['url']
+            self.url = str(parser['db']['url'])
         except Exception as e:
             print("missing db url")

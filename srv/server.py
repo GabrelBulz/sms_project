@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 import pika
+import db.ManageDB as ManageDb
+import json
 #from db import Model
 
-
+ManageDb.initialize()
+ManageDb.create_tables()
 
 ##client -> server
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
@@ -12,7 +15,8 @@ channel = connection.channel()
 channel.queue_declare(queue='client_server_ampq')
 
 def solve_queue(ch, method, properties, body):
-    print(" [x] Received %r" % body)
+    ManageDb.add_pack(json.loads(body))
+
 
 channel.basic_consume(solve_queue,
                       queue='client_server_ampq',
