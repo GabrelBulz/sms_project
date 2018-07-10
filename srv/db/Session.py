@@ -18,7 +18,7 @@ def initialize():
     global engine
     global SessionClass
 
-    engine = create_engine('sqlite:///:memory:',echo=True)
+    engine = create_engine(config.url,echo=True)
     SessionClass = sessionmaker(bind=engine, expire_on_commit=False)
 
 

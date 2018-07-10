@@ -8,6 +8,16 @@ import db.Session as Session
 Base = declarative_base()
 id_cont = 0
 
+
+"""
+    Object to be stored it table
+
+    It contains an
+    id (to identify the added packages) incemented each time a pack is added
+    node_id (id of node that sent the package)
+    metrics
+    timeStamp
+"""
 class objTable(Base):
 
     __tablename__ = 'tableMetrics'
@@ -18,7 +28,6 @@ class objTable(Base):
     TimeSpamp = Column('TimeStamp', DateTime, default=datetime.datetime.now)
 
     def __init__(self, pack):
-
         global id_cont
         id_cont+=1
         self.id=id_cont
@@ -30,22 +39,22 @@ class objTable(Base):
         except Exception as e:
             print("missing something from pack")
 
+
     @Session.ensure_session
     def save(self, session=None):
-        print('ffffffffffffffffffffff '+ str(self.id))
+        print("obj"+str(self.to_dict()))
         session.add(self)
         session.flush()
         session.refresh(self)
 
 
 
-    def to_dict(seft):
-
+    def to_dict(self):
         pack = {}
 
-        pack['id'] = id_cont
+        pack['id'] = self.id
         pack['id_node'] = self.node_id;
         pack['metrics'] = self.storedMetrics
-        pack['timeStamp'] = self.TimeStamp
+        pack['timeStamp'] = self.TimeSpamp
 
         return pack
