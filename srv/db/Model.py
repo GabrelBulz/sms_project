@@ -6,7 +6,7 @@ import db.Session as Session
 
 
 Base = declarative_base()
-id_cont = 0
+#id_cont = 0
 
 
 """
@@ -28,9 +28,9 @@ class objTable(Base):
     TimeSpamp = Column('TimeStamp', DateTime, default=datetime.datetime.now)
 
     def __init__(self, pack):
-        global id_cont
-        id_cont+=1
-        self.id=id_cont
+        #global id_cont
+        #id_cont+=1
+        #self.id=id_cont
 
         try:
             self.node_id = pack['id_node']
