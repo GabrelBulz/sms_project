@@ -1,22 +1,33 @@
+"""
+    Serve as a parser for the config file
+"""
+
 import configparser
 
 
 class ConfigMachineSRV(object):
+    """
+        Parse the config file give as an argumet
+        You can set it separately with set_filename(filename)
 
-	def __init__(self, filename):
+        Call parse_conf() to try to parse the filename given
+    """
+
+    def __init__(self, filename):
+        self.filename = filename
         self.ampq_url = ''
         self.ampq_port = ''
         self.ampq_vhost = ''
         self.ampq_user = ''
         self.ampq_password = ''
 
-	def set_filename(self, filename):
-		self.filename = filename
+    def set_filename(self, filename):
+        self.filename = filename
 
-	def parse_conf(self):
+    def parse_conf(self):
 
-		parser = configparser.RawConfigParser()
-		parser.read(self.filename)
+        parser = configparser.RawConfigParser()
+        parser.read(self.filename)
 
         try:
             self.ampq_url = parser['ampq']['url']
@@ -25,4 +36,4 @@ class ConfigMachineSRV(object):
             self.ampq_user = parser['ampq']['user']
             self.ampq_password = parser['ampq']['password']
         except Exception:
-            print("missing ampq configs")
+            print('Missing ampq configs')

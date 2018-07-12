@@ -1,4 +1,19 @@
 #!/usr/bin/env python
+
+"""
+    This module will create a pika connection to the server
+    CURRENTLY THE PIKA CONNECTION IS MADE USING LOCALHOSt, but ca be modified
+    to use the credentials, and port for the CONFIG param which stored parsed
+    info from the conf.ini file
+
+    A package containing the
+    -id_node
+    -metrics collected
+    -time stamp
+    will be created and send to the server based on the interval from the
+    config file
+"""
+
 import ConfigParser
 import datetime
 import json
@@ -42,6 +57,7 @@ def disk_usage():
 
 
 def solve_metrics(key):
+    # more metrics can be added here in the future
     temp_metrics = {
         'cpu_percent': psutil.cpu_percent(interval=1),
         'cpu_stats': psutil.cpu_stats(),

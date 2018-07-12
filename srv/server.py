@@ -1,4 +1,11 @@
 #!/usr/bin/env python
+
+"""
+    This module serves as a server for the app
+    It handles the incomming packages from the client
+    It initialize the DB
+"""
+
 import json
 from threading import Thread
 import pika

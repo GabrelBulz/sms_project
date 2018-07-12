@@ -18,7 +18,6 @@ SESSIONCLASS = None
 
 
 def initialize():
-
     """ initialize engine and a new session"""
 
     global ENGINE
@@ -29,11 +28,14 @@ def initialize():
 
 
 def get_new_session():
+    """ return a new session"""
     return SESSIONCLASS()
 
 
 @contextlib.contextmanager
 def get_temp_session():
+    """retrun a new session and close it after an operation id done"""
+
     try:
         session = get_new_session()
         yield session
@@ -43,7 +45,6 @@ def get_temp_session():
 
 
 def ensure_session(func):
-
     """ensures a session for add and get functions"""
 
     @functools.wraps(func)

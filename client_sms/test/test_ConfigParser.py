@@ -17,12 +17,12 @@ class Test_ConfigParser(unittest.TestCase):
             config.parse_conf()
 
         # test with missing ampq section
-        config.set_filename('test_conf1.ini')
+        config.set_filename('test_missing_ampq.ini')
         with self.assertRaises(Exception):
             config.parse_conf()
 
         # test with conf machine section
-        config.set_filename('test_conf1.ini')
+        config.set_filename('test_missing_CONF_MACHINE.ini')
         with self.assertRaises(Exception):
             config.parse_conf()
 
