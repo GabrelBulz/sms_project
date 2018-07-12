@@ -39,13 +39,18 @@ class ConfigMachine(object):
 
         try:
             self.id_node = parser['CONF_MACHINE']['ID_NODE']
-            self.metrics = parser['CONF_MACHINE']['METRICS'].split(',')
-        except Exception as e:
+
+            # eliminate possible white spaces between metrics
+            temp = parser['CONF_MACHINE']['METRICS'].split(',')
+            for itr in temp:
+                self.metrics.append(itr.strip())
+
+        except Exception:
             raise Exception("missing id or metrics")
 
         try:
             self.interval = parser['CONF_MAHCINE']['INTERVAL']
-        except Exception as e:
+        except Exception:
             self.interval = 1
 
         try:
@@ -54,5 +59,5 @@ class ConfigMachine(object):
             self.ampq_vhost = parser['ampq']['vhost']
             self.ampq_user = parser['ampq']['user']
             self.ampq_password = parser['ampq']['password']
-        except Exception as e:
+        except Exception:
             raise Exception("missing ampq configs")

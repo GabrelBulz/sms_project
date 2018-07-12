@@ -1,29 +1,35 @@
+"""
+    This module defines and initialize a Engine
+    and a Session for the DB
+"""
+
+import contextlib
+import functools
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import db.ConfigParser_db as ConfigParser_db
 
-import contextlib
-import functools
 
+CONFIG = ConfigParser_db.ConfigMachine_db('conf.ini')
+CONFIG.parse_conf()
 
-
-config = ConfigParser_db.ConfigMachine_db('conf.ini')
-config.parse_conf()
-
-engine = None
-SessionClass = None
+ENGINE = None
+SESSIONCLASS = None
 
 
 def initialize():
-    global engine
-    global SessionClass
 
-    engine = create_engine(config.url,echo=True)
-    SessionClass = sessionmaker(bind=engine, expire_on_commit=False)
+    """ initialize engine and a new session"""
+
+    global ENGINE
+    global SESSIONCLASS
+
+    ENGINE = create_engine(CONFIG.url, echo=True)
+    SESSIONCLASS = sessionmaker(bind=ENGINE, expire_on_commit=False)
 
 
 def get_new_session():
-    return SessionClass()
+    return SESSIONCLASS()
 
 
 @contextlib.contextmanager
@@ -36,15 +42,18 @@ def get_temp_session():
         session.close()
 
 
-def ensure_session(f):
-    @functools.wraps(f)
+def ensure_session(func):
+
+    """ensures a session for add and get functions"""
+
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         session = kwargs.pop('session', None)
         if not session:
             with get_temp_session() as session:
                 kwargs['session'] = session
-                return f(*args, **kwargs)
+                return func(*args, **kwargs)
         else:
             kwargs['session'] = session
-            return f(*args, **kwargs)
+            return func(*args, **kwargs)
     return wrapper

@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 from flask import Flask, jsonify, request
-import pika
-import uuid
-import json
 import server
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def index():
-    return jsonify({"about" : "bonjour, request exmaple explained:"+
+    return jsonify({"about": "bonjour, request exmaple explained:" +
                                 "sitename/params?id_node=..."})
+
 
 @app.route('/params')
 def index2():
@@ -21,7 +20,6 @@ def index2():
 
     result = server.solve_request_from_api(recived_args['id_node'])
     return jsonify(result)
-
 
 
 if __name__ == '__main__':

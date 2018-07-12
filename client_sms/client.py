@@ -1,19 +1,19 @@
 #!/usr/bin/env python
-import pika
 import ConfigParser
-import psutil
+import datetime
 import json
 import sched
 import time
-import datetime
+import psutil
+import pika
 
 
 # schedule for repating function
-Sched = sched.scheduler(time.time, time.sleep)
+SCHED = sched.scheduler(time.time, time.sleep)
 
-config = ConfigParser.ConfigMachine('conf.ini')
+CONFIG = ConfigParser.ConfigMachine('conf.ini')
 
-config.parse_conf()
+CONFIG.parse_conf()
 
 """
 int the future if i'll get a real server
@@ -22,11 +22,11 @@ parameters from the config file
 with config.ampq_url and so,
 but until then i'll just use local host
 """
-connection = pika.BlockingConnection(pika.ConnectionParameters(
-                                                            host='localhost'))
-channel = connection.channel()
+CONNECTION = pika.BlockingConnection(pika.ConnectionParameters(
+    host='localhost'))
+CHANNEL = CONNECTION.channel()
 
-channel.queue_declare(queue='client_server_ampq')
+CHANNEL.queue_declare(queue='client_server_ampq')
 
 
 #   this function is used to get usage of every diskpart
@@ -43,15 +43,15 @@ def disk_usage():
 
 def solve_metrics(key):
     temp_metrics = {
-                        'cpu_percent': psutil.cpu_percent(interval=1),
-                        'cpu_stats': psutil.cpu_stats(),
-                        'virtual_memory': psutil.virtual_memory(),
-                        'disk_usage': psutil.disk_usage('/')
-                    }
+        'cpu_percent': psutil.cpu_percent(interval=1),
+        'cpu_stats': psutil.cpu_stats(),
+        'virtual_memory': psutil.virtual_memory(),
+        'disk_usage': psutil.disk_usage('/')
+        }
 
     try:
         result = temp_metrics.get(key, 0)
-    except Exception as e:
+    except Exception:
         return key, 0
 
     return key, result
@@ -60,7 +60,7 @@ def solve_metrics(key):
 def get_metrics():
     colected_metrics = {}
 
-    for i in config.metrics:
+    for i in CONFIG.metrics:
         key, result = solve_metrics(i)
         colected_metrics[key] = result
 
@@ -71,7 +71,7 @@ def get_metrics():
 # it will contain the id_node , the collected metrics, and the interval
 def send_metrics(schedule):
     metrics_pack = {}
-    metrics_pack['id_node'] = config.id_node
+    metrics_pack['id_node'] = CONFIG.id_node
     metrics_pack['metrics'] = {}
     metrics_pack['timeStamp'] = str(datetime.datetime.now())
 
@@ -80,14 +80,14 @@ def send_metrics(schedule):
     for i in temp_metrics.keys():
         metrics_pack['metrics'][i] = temp_metrics[i]
 
-    channel.basic_publish(exchange='',
+    CHANNEL.basic_publish(exchange='',
                           routing_key='client_server_ampq',
                           body=json.dumps(metrics_pack))
 
-    schedule.enter(config.interval, 1, send_metrics, (schedule,))
+    schedule.enter(CONFIG.interval, 1, send_metrics, (schedule,))
 
 
 if __name__ == "__main__":
 
-    Sched.enter(config.interval, 1, send_metrics, (Sched,))
-    Sched.run()
+    SCHED.enter(CONFIG.interval, 1, send_metrics, (SCHED,))
+    SCHED.run()
