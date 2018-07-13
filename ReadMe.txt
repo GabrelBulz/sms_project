@@ -139,3 +139,8 @@ Test results:
 
 Flake8 test passed excep for:
     A unused function in client.py -> the function is there for a future update of the code
+
+UTILS:
+    contains default config files
+
+Scripts for autoinstalling all modules needed and for creating default config fils
