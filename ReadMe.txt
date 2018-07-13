@@ -22,8 +22,8 @@ client.py:
     info from the conf.ini file
 
     A package containing the
-    -id_node
-    -metrics collected
+    -id_node as int
+    -metrics collected as dict
     -time stamp
     will be created and send to the server based on the interval from the
     config file
@@ -40,6 +40,8 @@ test - folder containing:
         missing ampq credentials
         missing CONF_MACHINE segment (responsible for identifing the current
         machine and metrics to be send)
+    Test for the Cliet:
+        test - require wrong or undefined metrics
 
 Test result:
     passed
@@ -51,6 +53,8 @@ Test result:
 =============================================================
 
 Files:
+
+setup.py
 
 api.py
 
@@ -97,7 +101,7 @@ db-folder contains:
 
             POSSIBLE ERRORS:
                 because the fields are predefined if the server tries to insert a package
-                that has a different strucutre ex:string as a id_node, it will fail
+                that has a different strucutre
 
             Methods:
                 to_dict - return the object as a dict
@@ -123,5 +127,15 @@ db-folder contains:
         (the id is recived as a param,
         the session is optional, if not specified it will be initialize using ensure_session function from the session.py)
 
-    Test-folder ........................TO BE ADDED
+Test-folder contains:
 
+    test_db_add_pack -> test add function for an incomming package
+    if the pack isn't in the correct format or if, for example, instead of an int as id_node is passed a str an exception should be raised
+
+    test_ConfigParserSERVER
+
+Test results:
+    passed
+
+Flake8 test passed excep for:
+    A unused function in client.py -> the function is there for a future update of the code

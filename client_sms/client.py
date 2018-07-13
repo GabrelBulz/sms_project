@@ -100,7 +100,7 @@ def send_metrics(schedule):
         it will contain the id_node , the collected metrics, and the interval
     """
     metrics_pack = {}
-    metrics_pack['id_node'] = CONFIG.id_node
+    metrics_pack['id_node'] = int(CONFIG.id_node)
     metrics_pack['metrics'] = {}
     metrics_pack['timeStamp'] = str(datetime.datetime.now())
 

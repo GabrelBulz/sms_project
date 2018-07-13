@@ -53,7 +53,10 @@ class threadConClientServer(Thread):
         self.channel.queue_declare(queue='client_server_ampq')
 
     def solve_queue(self, channel, method, properties, body):
-        ManageDb.add_pack(json.loads(body))
+        try:
+            ManageDb.add_pack(json.loads(body))
+        except Exception as exc:
+            print('Not able to insert pack: ' + str(body) + str(exc))
 
     def run(self):
         self.channel.basic_consume(self.solve_queue,
