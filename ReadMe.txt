@@ -11,13 +11,13 @@ ConfigParser.py:
     Create a parser for the config file.
     Extract the id_node, metrics require to be transmitted, interval in second on which the client will send a package to server.
     Extract the credentials for the pika connection
-    CURRENTLY ALL PIKA CONNECTIONS ARE SET ON LOCALHOST AND THE AMPQ FIELDS FROM THE CONFIG FILE ARE NOT USE!!!!
+    CURRENTLY ALL PIKA CONNECTIONS ARE SET ON LOCALHOST AND THE AMPQ FIELDS FROM THE CONFIG FILE ARE NOT USED!!!!
     (but can be modifyed to use the ampq elements from the config file)
 
 
 client.py:
     This module will create a pika connection to the server
-    CURRENTLY THE PIKA CONNECTION IS MADE USING LOCALHOSt, but ca be modified
+    CURRENTLY THE PIKA CONNECTION IS MADE USING LOCALHOST, but ca be modified
     to use the credentials, and port for the CONFIG param which stored parsed
     info from the conf.ini file
 
@@ -58,10 +58,10 @@ setup.py
 
 api.py
 
-    Recommmended to start only yhe apy
+    Recommmended to start only the apy
     IF YOU START THE API THE SERVER WILL START AS WELL
 
-    It has a function for managin the default route, which will return a "about"-how to use the site; message displayed:
+    It has a function for managing the default route, which will return a "about"-how to use the site; message displayed:
         "bonjour, request exmaple explained sitename/params?id_node=..." where id_node will be the id of the node that you want to receive metrics from
 
     It has a function for handling the route with /params
@@ -78,7 +78,7 @@ server.py
     to use the prot, and credentials stored in config file, using the parser
 
     It also provides a function that can be called from the api.py called
-    solve_Request_from_api that will return a list of packages sotred in
+    solve_request_from_api that will return a list of packages sotred in
     the db with the specified id_node (it returns all the packages stored
     with that id)
 
@@ -100,8 +100,8 @@ db-folder contains:
                 -timeStamp - AS DATETIME - DEFAULT CURRENT DATETIME
 
             POSSIBLE ERRORS:
-                because the fields are predefined if the server tries to insert a package
-                that has a different strucutre
+                the fields are predefined, so if the server tries to insert a package
+                that has a different strucutre a error may apper
 
             Methods:
                 to_dict - return the object as a dict
