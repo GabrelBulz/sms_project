@@ -10,6 +10,10 @@ import json
 from threading import Thread
 import pika
 import db.ManageDB as ManageDb
+import ConfigParserSERVER as ConfParsSRV
+
+CONFIG = ConfParsSRV.ConfigMachineSRV('conf.ini')
+CONFIG.parse_conf()
 
 
 ManageDb.initialize()
@@ -29,7 +33,22 @@ class threadConClientServer(Thread):
 
     def __init__(self):
         Thread.__init__(self)
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+
+        """
+        the pika connection can be created using the
+        parameters from the config file
+        with config.ampq_url and so,
+        but fow now i'll just use local host
+
+        cred = pika.PlainCredentials(CONFIG.ampq_user, CONFIG.ampq_password)
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(
+            host=CONFIG.ampq_url,
+            port=int(CONFIG.ampq_port),
+            virtual_host=CONFIG.ampq_vhost,
+            credentials=cred))
+        """
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters(host='localhost'))
         self.channel = self.connection.channel()
         self.channel.queue_declare(queue='client_server_ampq')
 

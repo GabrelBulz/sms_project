@@ -3,10 +3,9 @@
 """
     This module will create a pika connection to the server
     CURRENTLY THE PIKA CONNECTION IS MADE USING LOCALHOSt, but ca be modified
-    to use the credentials, and port for the CONFIG param which stored parsed
-    info from the conf.ini file
+    to use the credentials, and port for the CONFIG param
 
-    A package containing the
+    A package containing:
     -id_node
     -metrics collected
     -time stamp
@@ -23,7 +22,7 @@ import psutil
 import pika
 
 
-# schedule for repating function
+# schedule for repeating function send_metrics
 SCHED = sched.scheduler(time.time, time.sleep)
 
 CONFIG = ConfigParser.ConfigMachine('conf.ini')
@@ -31,12 +30,19 @@ CONFIG = ConfigParser.ConfigMachine('conf.ini')
 CONFIG.parse_conf()
 
 """
-int the future if i'll get a real server
-the pika connection will be created using the
+the pika connection can be created using the
 parameters from the config file
 with config.ampq_url and so,
-but until then i'll just use local host
+but fow now i'll just use local host
+
+CREDENTIALS = pika.PlainCredentials(CONFIG.ampq_user, CONFIG.ampq_password)
+CONNECTION = pika.BlockingConnection(pika.ConnectionParameters(
+    host=CONFIG.ampq_url,
+    port=int(CONFIG.ampq_port),
+    virtual_host=CONFIG.ampq_vhost,
+    credentials=CREDENTIALS))
 """
+
 CONNECTION = pika.BlockingConnection(pika.ConnectionParameters(
     host='localhost'))
 CHANNEL = CONNECTION.channel()
@@ -44,10 +50,12 @@ CHANNEL = CONNECTION.channel()
 CHANNEL.queue_declare(queue='client_server_ampq')
 
 
-#   this function is used to get usage of every diskpart
-#   but from one reason it dosen't work on my computer
-#   (access denied), probably because of antivirus
 def disk_usage():
+    """
+        this function is used to get usage of every diskpart
+        but from one reason it dosen't work on my computer
+        (access denied), probably because of antivirus
+    """
     partion_usage = []
 
     for part in psutil.disk_partitions(all=False):
@@ -57,7 +65,10 @@ def disk_usage():
 
 
 def solve_metrics(key):
-    # more metrics can be added here in the future
+    """
+        based on the key it returns the metrics collected with psutil
+        more metrics can be added here in the future
+    """
     temp_metrics = {
         'cpu_percent': psutil.cpu_percent(interval=1),
         'cpu_stats': psutil.cpu_stats(),
@@ -83,9 +94,11 @@ def get_metrics():
     return colected_metrics
 
 
-# this function will create a json object to be sent to the server
-# it will contain the id_node , the collected metrics, and the interval
 def send_metrics(schedule):
+    """
+        this function will create a json object to be sent to the server
+        it will contain the id_node , the collected metrics, and the interval
+    """
     metrics_pack = {}
     metrics_pack['id_node'] = CONFIG.id_node
     metrics_pack['metrics'] = {}
@@ -100,10 +113,14 @@ def send_metrics(schedule):
                           routing_key='client_server_ampq',
                           body=json.dumps(metrics_pack))
 
-    schedule.enter(CONFIG.interval, 1, send_metrics, (schedule,))
+    # recall function at setted interval (in sec)
+    schedule.enter(int(CONFIG.interval), 1, send_metrics, (schedule,))
+
+
+def main():
+    SCHED.enter(CONFIG.interval, 1, send_metrics, (SCHED,))
+    SCHED.run()
 
 
 if __name__ == "__main__":
-
-    SCHED.enter(CONFIG.interval, 1, send_metrics, (SCHED,))
-    SCHED.run()
+    main()

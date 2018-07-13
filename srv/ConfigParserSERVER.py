@@ -36,4 +36,4 @@ class ConfigMachineSRV(object):
             self.ampq_user = parser['ampq']['user']
             self.ampq_password = parser['ampq']['password']
         except Exception:
-            print('Missing ampq configs')
+            raise Exception('missing ampq section')

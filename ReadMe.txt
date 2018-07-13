@@ -27,6 +27,7 @@ client.py:
     -time stamp
     will be created and send to the server based on the interval from the
     config file
+    !!!Possible error if the interval is not given as a numerical value!!!(not tested)
 
 
 conf.ini
