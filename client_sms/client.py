@@ -16,14 +16,10 @@
 import ConfigParser
 import datetime
 import json
-import sched
 import time
 import psutil
 import pika
 
-
-# schedule for repeating function send_metrics
-SCHED = sched.scheduler(time.time, time.sleep)
 
 CONFIG = ConfigParser.ConfigMachine('conf.ini')
 
@@ -43,25 +39,19 @@ CONNECTION = pika.BlockingConnection(pika.ConnectionParameters(
     credentials=CREDENTIALS))
 """
 
-CONNECTION = pika.BlockingConnection(pika.ConnectionParameters(
-    host='localhost'))
-CHANNEL = CONNECTION.channel()
 
-CHANNEL.queue_declare(queue='client_server_ampq')
-
-
-def disk_usage():
+def create_pika_connection():
     """
-        this function is used to get usage of every diskpart
-        but from one reason it dosen't work on my computer
-        (access denied), probably because of antivirus
+        creates and returns a channel to pika connection
     """
-    partion_usage = []
+    connection = pika.BlockingConnection(pika.ConnectionParameters(
+        host='localhost'))
 
-    for part in psutil.disk_partitions(all=False):
-        partion_usage.append(psutil.disk_usage(part.mountpoint))
+    channel = connection.channel()
 
-    return partition_usage
+    channel.queue_declare(queue='client_server_ampq')
+
+    return channel
 
 
 def solve_metrics(key):
@@ -85,6 +75,10 @@ def solve_metrics(key):
 
 
 def get_metrics():
+    """
+        collect each metric separately and
+        return a dict with colllected metrics
+    """
     colected_metrics = {}
 
     for i in CONFIG.metrics:
@@ -94,7 +88,7 @@ def get_metrics():
     return colected_metrics
 
 
-def send_metrics(schedule):
+def send_metrics(channel_pika):
     """
         this function will create a json object to be sent to the server
         it will contain the id_node , the collected metrics, and the interval
@@ -106,20 +100,21 @@ def send_metrics(schedule):
 
     temp_metrics = get_metrics()
 
-    for i in temp_metrics.keys():
+    for i in temp_metrics:
         metrics_pack['metrics'][i] = temp_metrics[i]
 
-    CHANNEL.basic_publish(exchange='',
-                          routing_key='client_server_ampq',
-                          body=json.dumps(metrics_pack))
-
-    # recall function at setted interval (in sec)
-    schedule.enter(int(CONFIG.interval), 1, send_metrics, (schedule,))
+    channel_pika.basic_publish(exchange='',
+                               routing_key='client_server_ampq',
+                               body=json.dumps(metrics_pack))
 
 
 def main():
-    SCHED.enter(CONFIG.interval, 1, send_metrics, (SCHED,))
-    SCHED.run()
+
+    channel_pika = create_pika_connection()
+
+    while 1:
+        send_metrics(channel_pika)
+        time.sleep(CONFIG.interval)
 
 
 if __name__ == "__main__":
