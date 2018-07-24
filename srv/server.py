@@ -7,13 +7,12 @@
 """
 
 import json
+import os
+import sys
 from threading import Thread
 import pika
 import db.manageDB as manageDb
 import ConfigParserSERVER as ConfParsSRV
-
-CONFIG = ConfParsSRV.ConfigMachineSRV('conf.ini')
-CONFIG.parse_conf()
 
 
 manageDb.initialize()
@@ -31,7 +30,7 @@ class ThreadConClientServer(Thread):
         If a pack is recived it is added to DB
     """
 
-    def __init__(self):
+    def __init__(self, config):
         Thread.__init__(self)
 
         """
@@ -47,6 +46,7 @@ class ThreadConClientServer(Thread):
             virtual_host=CONFIG.ampq_vhost,
             credentials=cred))
         """
+        self.config = config
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(host='localhost'))
         self.channel = self.connection.channel()
@@ -66,15 +66,39 @@ class ThreadConClientServer(Thread):
         self.channel.start_consuming()
 
 
+def set_up_config():
+    """
+        parse --config file from the command line
+    """
+    filename = 'default_conf.ini'
+
+    if len(sys.argv) > 1:
+        if sys.argv[1] == '--config':
+            try:
+                filename = str(sys.argv[2])
+            except IndexError:
+                print('missing filename or path after --config')
+
+    if not os.path.isfile(filename):
+        filename = 'default_conf.ini'
+        print('given config path or file does not exist')
+
+    config = ConfParsSRV.ConfigMachineSRV(filename)
+    config.parse_conf()
+
+    return config
+
+
 def solve_request_from_api(recived_args):
     result = manageDb.get_pack(recived_args['id_node'])
     return result
 
 
 def main():
+    config = set_up_config()
 
     # create and start thread for pika connection
-    thread_client_srv = ThreadConClientServer()
+    thread_client_srv = ThreadConClientServer(config)
     thread_client_srv.start()
 
 
