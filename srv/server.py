@@ -9,18 +9,18 @@
 import json
 from threading import Thread
 import pika
-import db.ManageDB as ManageDb
+import db.manageDB as manageDb
 import ConfigParserSERVER as ConfParsSRV
 
 CONFIG = ConfParsSRV.ConfigMachineSRV('conf.ini')
 CONFIG.parse_conf()
 
 
-ManageDb.initialize()
-ManageDb.create_tables()
+manageDb.initialize()
+manageDb.create_tables()
 
 
-class threadConClientServer(Thread):
+class ThreadConClientServer(Thread):
 
     """
         Thread class for pika server
@@ -54,7 +54,7 @@ class threadConClientServer(Thread):
 
     def solve_queue(self, channel, method, properties, body):
         try:
-            ManageDb.add_pack(json.loads(body))
+            manageDb.add_pack(json.loads(body))
         except Exception as exc:
             print('Not able to insert pack: ' + str(body) + str(exc))
 
@@ -66,14 +66,15 @@ class threadConClientServer(Thread):
         self.channel.start_consuming()
 
 
-def solve_request_from_api(id_node):
-    return ManageDb.get_pack(id_node)
+def solve_request_from_api(recived_args):
+    result = manageDb.get_pack(recived_args['id_node'])
+    return result
 
 
 def main():
 
     # create and start thread for pika connection
-    thread_client_srv = threadConClientServer()
+    thread_client_srv = ThreadConClientServer()
     thread_client_srv.start()
 
 

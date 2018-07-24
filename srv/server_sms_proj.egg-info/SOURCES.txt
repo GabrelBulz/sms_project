@@ -1,8 +1,0 @@
-setup.py
-server_sms_proj.egg-info/PKG-INFO
-server_sms_proj.egg-info/SOURCES.txt
-server_sms_proj.egg-info/dependency_links.txt
-server_sms_proj.egg-info/requires.txt
-server_sms_proj.egg-info/top_level.txt
-test/test_ConfigParserSERVER.py
-test/test_db_add_pack.py

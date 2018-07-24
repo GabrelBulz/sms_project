@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 """
+    Sys args
+        --config -filename- or -path-
+
     This module will create a pika connection to the server
     CURRENTLY THE PIKA CONNECTION IS MADE USING LOCALHOSt, but ca be modified
     to use the credentials, and port for the CONFIG param
@@ -13,17 +16,36 @@
     config file
 """
 
-import ConfigParser
-import datetime
-import json
+import os
+import sys
 import time
-import psutil
 import pika
+import collector
+import config_parser
 
 
-CONFIG = ConfigParser.ConfigMachine('conf.ini')
+def set_up_config():
+    """
+        parse --config file from the command line
+    """
+    filename = 'default_conf.ini'
 
-CONFIG.parse_conf()
+    if len(sys.argv) > 1:
+        if sys.argv[1] == '--config':
+            try:
+                filename = str(sys.argv[2])
+            except IndexError:
+                print('missing filename or path after --config')
+
+    if not os.path.isfile(filename):
+        filename = 'default_conf.ini'
+        print('given config path or file does not exist')
+
+    config = config_parser.ConfigMachine(filename)
+    config.parse_conf()
+
+    return config
+
 
 """
 the pika connection can be created using the
@@ -38,11 +60,11 @@ CONNECTION = pika.BlockingConnection(pika.ConnectionParameters(
     virtual_host=CONFIG.ampq_vhost,
     credentials=CREDENTIALS))
 """
-
-
-def create_pika_connection():
+def create_pika_connection(config):
     """
         creates and returns a channel to pika connection
+
+        config param should be used when creating connection if needed
     """
     connection = pika.BlockingConnection(pika.ConnectionParameters(
         host='localhost'))
@@ -54,67 +76,27 @@ def create_pika_connection():
     return channel
 
 
-def solve_metrics(key):
-    """
-        based on the key it returns the metrics collected with psutil
-        more metrics can be added here in the future
-    """
-    temp_metrics = {
-        'cpu_percent': psutil.cpu_percent(interval=1),
-        'cpu_stats': psutil.cpu_stats(),
-        'virtual_memory': psutil.virtual_memory(),
-        'disk_usage': psutil.disk_usage('/')
-        }
-
-    try:
-        result = temp_metrics.get(key, 0)
-    except Exception:
-        return key, 0
-
-    return key, result
-
-
-def get_metrics():
-    """
-        collect each metric separately and
-        return a dict with colllected metrics
-    """
-    colected_metrics = {}
-
-    for i in CONFIG.metrics:
-        key, result = solve_metrics(i)
-        colected_metrics[key] = result
-
-    return colected_metrics
-
-
-def send_metrics(channel_pika):
+def send_metrics(channel_pika, config):
     """
         this function will create a json object to be sent to the server
         it will contain the id_node , the collected metrics, and the interval
     """
-    metrics_pack = {}
-    metrics_pack['id_node'] = int(CONFIG.id_node)
-    metrics_pack['metrics'] = {}
-    metrics_pack['timeStamp'] = str(datetime.datetime.now())
-
-    temp_metrics = get_metrics()
-
-    for i in temp_metrics:
-        metrics_pack['metrics'][i] = temp_metrics[i]
+    pack_collected = collector.Collector(config.id_node, config.metrics)
+    pack_collected.collect_metrics()
 
     channel_pika.basic_publish(exchange='',
                                routing_key='client_server_ampq',
-                               body=json.dumps(metrics_pack))
+                               body=pack_collected.to_json())
 
 
 def main():
 
-    channel_pika = create_pika_connection()
+    config = set_up_config()
+    channel_pika = create_pika_connection(config)
 
     while 1:
-        send_metrics(channel_pika)
-        time.sleep(CONFIG.interval)
+        send_metrics(channel_pika, config)
+        time.sleep(config.interval)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 import sys
 import unittest
 sys.path.append('..')
-import ConfigParser
+import config_parser
 import client
 
 
@@ -10,7 +10,7 @@ class Test_ConfigParser(unittest.TestCase):
     def test_parse_conf(self):
 
         # test good config file
-        config = ConfigParser.ConfigMachine('../conf.ini')
+        config = config_parser.ConfigMachine('../conf.ini')
         self.assertEqual(config.parse_conf(), None)
 
         # test with bad filename
@@ -20,13 +20,13 @@ class Test_ConfigParser(unittest.TestCase):
 
     def test_parse_conf_missing_ampq_section(self):
         # test with missing ampq section
-        config = ConfigParser.ConfigMachine('test_missing_ampq')
+        config = config_parser.ConfigMachine('test_missing_ampq')
         with self.assertRaises(Exception):
             config.parse_conf()
 
     def test_parse_conf_missing_conf_machine_section(self):
         # test with conf machine section
-        config = ConfigParser.ConfigMachine('test_missing_CONF_MACHINE')
+        config = config_parser.ConfigMachine('test_missing_CONF_MACHINE')
         with self.assertRaises(Exception):
             config.parse_conf()
 

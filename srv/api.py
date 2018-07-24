@@ -21,13 +21,12 @@ def index():
 @APP.route('/params')
 def index2():
     """Handles the params route """
-
     recived_args = request.args
 
     if "id_node" not in recived_args:
         return jsonify("missing id_node")
 
-    result = server.solve_request_from_api(recived_args['id_node'])
+    result = server.solve_request_from_api(recived_args)
     return jsonify(result)
 
 

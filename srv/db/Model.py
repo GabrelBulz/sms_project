@@ -5,7 +5,7 @@
 import datetime
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
-import db.Session as Session
+import db.session as session
 
 
 BASE = declarative_base()
@@ -24,22 +24,22 @@ class objTable(BASE):
 
     """
 
-    __tablename__ = 'tableMetrics'
+    __tablename__ = 'table_metrics'
 
     id = Column('id', Integer, primary_key=True)
     node_id = Column('node_id', Integer, unique=False, default=0)
-    storedMetrics = Column('Metrics', String(200), default="missing metrics")
-    TimeSpamp = Column('TimeStamp', DateTime, default=datetime.datetime.now)
+    stored_metrics = Column('metrics', String(200), default="missing metrics")
+    time_stamp = Column('time_stamp', String(200), default=str(datetime.datetime.now))
 
     def __init__(self, pack):
         try:
             self.node_id = pack['id_node']
-            self.storedMetrics = str(pack['metrics'])
-            self.TimeStamp = pack['timeStamp']
+            self.stored_metrics = str(pack['metrics'])
+            self.time_stamp = pack['time_stamp']
         except Exception:
             print("missing something from pack")
 
-    @Session.ensure_session
+    @session.ensure_session
     def save(self, session=None):
         session.add(self)
         session.flush()
@@ -50,7 +50,7 @@ class objTable(BASE):
 
         pack['id'] = self.id
         pack['id_node'] = self.node_id
-        pack['metrics'] = self.storedMetrics
-        pack['timeStamp'] = self.TimeSpamp
+        pack['metrics'] = self.stored_metrics
+        pack['time_stamp'] = self.time_stamp
 
         return pack

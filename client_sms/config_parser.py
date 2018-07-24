@@ -1,3 +1,7 @@
+"""
+    Config Parser for client
+"""
+
 import configparser
 
 
@@ -33,6 +37,9 @@ class ConfigMachine(object):
         self.filename = filename
 
     def parse_conf(self):
+        """
+            try to parse the config file
+        """
 
         parser = configparser.RawConfigParser()
         parser.read(self.filename)
