@@ -7,10 +7,10 @@ import contextlib
 import functools
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import server_sms_proj.db.ConfigParser_db as ConfigParser_db
+from server_sms_proj.db import ConfigParser_db as ConfigParser_db
 
 
-CONFIG = ConfigParser_db.ConfigMachine_db('conf.ini')
+CONFIG = ConfigParser_db.ConfigMachine_db('default_conf.ini')
 CONFIG.parse_conf()
 
 ENGINE = None
