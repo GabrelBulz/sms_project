@@ -9,7 +9,7 @@ def create_config_if_needed():
         exit()
     else:
         copyfile('./utils/conf_client.ini', './client_sms/conf.ini')
-        os.rename('./client_sms/conf_client.ini', './client_sms/conf.ini')
+        os.rename('./client_sms/conf_client.ini', './client_sms/default_conf.ini')
 
 
 def main():

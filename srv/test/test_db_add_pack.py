@@ -31,7 +31,7 @@ class Test_db_add_pack(unittest.TestCase):
         """
         good_pack = self.create_good_pack()
 
-        self.assertEqual(server.ManageDb.add_pack(good_pack), None)
+        self.assertEqual(server.manageDb.add_pack(good_pack), None)
 
     def test_add_pack_bad(self):
         """
@@ -39,7 +39,7 @@ class Test_db_add_pack(unittest.TestCase):
         """
         bad_pack = self.create_bad_pack()
         with self.assertRaises(Exception):
-            server.ManageDb.add_pack(bad_pack)
+            server.manageDb.add_pack(bad_pack)
 
 
 if __name__ == '__main__':

@@ -1,15 +1,15 @@
 import sys
 import unittest
 sys.path.append('..')
-import ConfigParserSERVER
+import config_parser_server
 
 
-class Test_ConfigParserSERVER(unittest.TestCase):
+class TestConfigParserSERVER(unittest.TestCase):
 
     def test_parse_conf(self):
 
         # test good config file
-        config = ConfigParserSERVER.ConfigMachineSRV('../conf.ini')
+        config = config_parser_server.ConfigMachineSRV('../default_conf.ini')
         self.assertEqual(config.parse_conf(), None)
 
         # test with bad filename
@@ -19,7 +19,7 @@ class Test_ConfigParserSERVER(unittest.TestCase):
 
     def test_parse_conf_missing_ampq_section(self):
         # test with missing ampq section
-        config = ConfigParserSERVER.ConfigMachineSRV('test_missing_ampq')
+        config = config_parser_server.ConfigMachineSRV('test_missing_ampq')
         with self.assertRaises(Exception):
             config.parse_conf()
 

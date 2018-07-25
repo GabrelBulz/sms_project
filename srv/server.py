@@ -12,7 +12,7 @@ import sys
 from threading import Thread
 import pika
 import db.manageDB as manageDb
-import ConfigParserSERVER as ConfParsSRV
+import config_parser_server as ConfParsSRV
 
 
 manageDb.initialize()

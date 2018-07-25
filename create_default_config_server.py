@@ -9,7 +9,7 @@ def create_config_if_needed():
         exit()
     else:
         copyfile('./utils/conf_server.ini', './srv/conf.ini')
-        os.rename('./srv/conf_server.ini', './srv/conf.ini')
+        os.rename('./srv/conf_server.ini', './srv/default_conf.ini')
 
 
 def main():
