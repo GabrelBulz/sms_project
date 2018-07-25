@@ -1,10 +1,10 @@
 __pycache__
 *.pyc
-/srv/__pycache__
+/srv/server_sms_proj/__pycache__
 /srv/build
 /srv/dist
 /srv/server_sms_proj.egg-info
-/client_sms/__pycache__
+/client_sms/client_sms/__pycache__
 /client_sms/build
 /client_sms/dist
 /client_sms/client_sms.egg-info
