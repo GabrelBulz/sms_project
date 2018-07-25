@@ -1,5 +1,9 @@
 __pycache__
 *.pyc
 /srv/__pycache__
+/srv/build
+/srv/dist
 /client_sms/__pycache__
+/client_sms/build
+/client_sms/dist
 
