@@ -2,10 +2,8 @@
     Test file for client_sms collector file
 """
 
-import sys
 import unittest
-sys.path.append('..')
-import collector
+from client_sms import collector
 
 
 class TestCollector(unittest.TestCase):

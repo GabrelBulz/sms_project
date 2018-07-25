@@ -5,7 +5,7 @@
 import datetime
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
-import db.session as session
+import server_sms_proj.db.session as session
 
 
 BASE = declarative_base()

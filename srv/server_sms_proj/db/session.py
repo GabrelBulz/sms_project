@@ -7,7 +7,7 @@ import contextlib
 import functools
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import db.ConfigParser_db as ConfigParser_db
+import server_sms_proj.db.ConfigParser_db as ConfigParser_db
 
 
 CONFIG = ConfigParser_db.ConfigMachine_db('conf.ini')

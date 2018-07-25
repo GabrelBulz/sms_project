@@ -1,8 +1,6 @@
 import datetime
 import unittest
-import sys
-sys.path.append('..')
-import server
+from server_sms_proj import server
 
 
 class Test_db_add_pack(unittest.TestCase):

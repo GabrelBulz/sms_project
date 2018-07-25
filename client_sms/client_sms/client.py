@@ -20,8 +20,8 @@ import os
 import sys
 import time
 import pika
-import collector
-import config_parser
+from client_sms import collector
+from client_sms import config_parser
 
 
 def set_up_config():

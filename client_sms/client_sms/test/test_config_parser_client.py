@@ -2,10 +2,8 @@
     Test client config parser
 """
 
-import sys
 import unittest
-sys.path.append('..')
-import config_parser
+from client_sms import config_parser
 
 
 class TestConfigParser(unittest.TestCase):

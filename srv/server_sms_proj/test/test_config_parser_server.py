@@ -1,7 +1,5 @@
-import sys
 import unittest
-sys.path.append('..')
-import config_parser_server
+from server_sms_proj import config_parser_server
 
 
 class TestConfigParserSERVER(unittest.TestCase):

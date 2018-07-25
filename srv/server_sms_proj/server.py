@@ -11,8 +11,8 @@ import os
 import sys
 from threading import Thread
 import pika
-import db.manageDB as manageDb
-import config_parser_server as ConfParsSRV
+import server_sms_proj.db.manageDB as manageDb
+import server_sms_proj.config_parser_server as ConfParsSRV
 
 
 manageDb.initialize()

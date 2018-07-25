@@ -2,8 +2,8 @@
     This module will serve as an api for the DB
 """
 
-import db.session as session
-import db.model as model
+import server_sms_proj.db.session as session
+import server_sms_proj.db.model as model
 
 
 def initialize():

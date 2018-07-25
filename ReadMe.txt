@@ -7,7 +7,7 @@ Files:
 
 setup.py
 
-ConfigParser.py:
+config_parser.py:
     Create a parser for the config file.
     Extract the id_node, metrics require to be transmitted, interval in second on which the client will send a package to server.
     Extract the credentials for the pika connection
@@ -21,7 +21,13 @@ client.py:
     to use the credentials, and port for the CONFIG param which stored parsed
     info from the conf.ini file
 
-    A package containing the
+    A collector is createad and metrics are collected. The collector is then transform
+    to a json string and pass to the server DB
+
+collector.py
+    This class is responsible for collecting the required metrics given as an argumnt
+    The metrics should be a list
+    the collector package contains:
     -id_node as int
     -metrics collected as dict
     -time stamp
@@ -35,13 +41,15 @@ conf.ini
 
 test - folder containing:
 
-    Tests for the ConfigParser:
+    Tests for the config_parser:
         test for wrong filename
         missing ampq credentials
         missing CONF_MACHINE segment (responsible for identifing the current
         machine and metrics to be send)
-    Test for the Cliet:
+    Test for the collector:
         test - require wrong or undefined metrics
+
+    some conf files created for tests
 
 Test result:
     passed
@@ -88,7 +96,7 @@ db-folder contains:
     ConfigParser_db:
         Parse the url from the config file for the DataBase
 
-    Model.py
+    model.py
         Create a model for the objects that will be stored in the table
         Table name is set as tableMetrics
         Contains class objTable which has:
@@ -107,7 +115,7 @@ db-folder contains:
                 to_dict - return the object as a dict
                 save - save itself in the table, using a session as a param
 
-    Session.py
+    session.py
 
         Contains the Engine and a session for the DB
         A function that can initialize the engine and make a session
@@ -115,7 +123,7 @@ db-folder contains:
         Function ensure_session takes as param a function, and it ensures a new session
         for that function (if the session is not specified in the params list)
 
-    ManageDB.py
+    manageDB.py
 
         Is an api for the DB
         This module creates the table which will store the packages, base on the url specified in the conf file
@@ -132,7 +140,7 @@ Test-folder contains:
     test_db_add_pack -> test add function for an incomming package
     if the pack isn't in the correct format or if, for example, instead of an int as id_node is passed a str an exception should be raised
 
-    test_ConfigParserSERVER
+    test_config_parser_server
 
 Test results:
     passed
