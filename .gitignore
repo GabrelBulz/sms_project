@@ -1,2 +1,5 @@
 __pycache__
+*.pyc
+/srv/__pycache__
+/client_sms/__pycache__
 
