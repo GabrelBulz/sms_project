@@ -13,6 +13,7 @@ from threading import Thread
 import pika
 from server_sms_proj.db import manageDB as manageDb
 from server_sms_proj import config_parser_server as ConfParsSRV
+from server_sms_proj import filter_pack
 
 
 manageDb.initialize()
@@ -89,9 +90,19 @@ def set_up_config():
     return config
 
 
-def solve_request_from_api(recived_args):
-    result = manageDb.get_pack(recived_args['id_node'])
-    return result
+def solve_request_from_api(received_args):
+    """
+        tries to apply the filter received from the api
+
+        the only exception handeled is where the interval is not a numeric
+        value  ---> a string is return if the error occurs
+    """
+    result = manageDb.get_pack(received_args['id_node'])
+    try:
+        filt = filter_pack.FilterPack(result, received_args)
+        return filt.get_filtered_pack()
+    except ValueError:
+        return str('Invalid interval: cannot convert')
 
 
 def main():

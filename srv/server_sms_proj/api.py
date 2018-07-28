@@ -15,7 +15,7 @@ def index():
     """ Handles the default route """
 
     return jsonify({"about": "bonjour, request exmaple explained:" +
-                             "sitename/params?id_node=..."})
+                             "sitename/params?id_node=...&metrics=cpu_percent,disk_usage,virtual_memory&inteval=(as numerical value)"})
 
 
 @APP.route('/params')

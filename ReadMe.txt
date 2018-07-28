@@ -16,6 +16,8 @@ config_parser.py:
 
 
 client.py:
+    Has a --config option if filename is missing or not valid it will use default_conf.ini file
+
     This module will create a pika connection to the server
     CURRENTLY THE PIKA CONNECTION IS MADE USING LOCALHOST, but ca be modified
     to use the credentials, and port for the CONFIG param which stored parsed
@@ -70,7 +72,7 @@ api.py
     IF YOU START THE API THE SERVER WILL START AS WELL
 
     It has a function for managing the default route, which will return a "about"-how to use the site; message displayed:
-        "bonjour, request exmaple explained sitename/params?id_node=..." where id_node will be the id of the node that you want to receive metrics from
+        "bonjour, request exmaple explained sitename/params?id_node=...&metrics=cpu_percent,disk_usage,virtual_memory&inteval=(as numerical value)" where id_node will be the id of the node that you want to receive metrics from
 
     It has a function for handling the route with /params
     This function will create a request from the DB for that specific node id, returning an array with packages (will return all packages with that id node)
@@ -78,6 +80,7 @@ api.py
 
 
 server.py
+    Has a --config option if filename is missing or not valid it will use default_conf.ini file
 
     The server will initialize the DB using ManageDb(api for db)
     It has a thread which will handle the pika connection with the client
@@ -89,6 +92,16 @@ server.py
     solve_request_from_api that will return a list of packages sotred in
     the db with the specified id_node (it returns all the packages stored
     with that id)
+
+filter_pack.py
+    This module contains a class FilterPack
+
+    Takes a list of packages and a dict containing required filters from the api
+
+    Has a filter for time_interval
+    Has a filter for metrics
+        If non existing metrics are required, all containing packages will have that field
+        as a metric but will be None
 
 
 db-folder contains:
@@ -141,6 +154,10 @@ Test-folder contains:
     if the pack isn't in the correct format or if, for example, instead of an int as id_node is passed a str an exception should be raised
 
     test_config_parser_server
+
+    test_fiter_pack
+    Test for non_existing metrics
+    Test for non numerical interval --> ValueError should be raised
 
 Test results:
     passed

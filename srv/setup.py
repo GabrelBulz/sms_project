@@ -7,6 +7,6 @@ setup(
     author="Gabriel Bulz",
     url='https://github.com/GabrelBulz/sms_project',
     description='Server ,api and db for handling metrics',
-    install_requires=['pika', 'flask', 'sqlalchemy'],
+    install_requires=['pika', 'flask', 'sqlalchemy', 'pandas'],
     packages=find_packages()
 )
